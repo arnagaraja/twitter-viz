@@ -75,4 +75,4 @@ saveGIF ({
             
             print(p1)
       }
-}, interval = 0.25, ani.width = 1028, ani.height = 514, movie.name = "sunrise-tweets-7h.gif")
+}, interval = 0.125, ani.width = 1028, ani.height = 514, movie.name = "sunrise-tweets-7h-8fps.gif")

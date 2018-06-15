@@ -4,8 +4,8 @@ library(streamR)
 
 # Coordinates for USA
 usa <- c(-124.848974,24.396308,66.53076,49.23037)
-filterStream(file.name = "dat/sunriseTrack.json", oauth = my_oauth, locations = usa, 
-             timeout = 25200) # 7 hours
+filterStream(file.name = "dat/sunriseTrack-7h.json", oauth = my_oauth, 
+             locations = usa, timeout = 25200) # 7 hours
 parsed <- parseTweets("dat/sunriseTrack-7h.json")
 parsed <- tbl_df(parsed)
 saveRDS(parsed, "dat/sunriseTweetsDF-7h.rds")
@@ -20,11 +20,10 @@ locations <- select(parsed, created_at, place_lat, place_lon, lat, lon) %>%
                                   format = "%Y-%m-%d %H:%M %Z", tz = "America/New_York"))
 
 # Some of the place_lat and place_lon values are NA, but there are entries for lat and lon. So, copy the lat/lon values to place_lat and place_lon
-for (i in 1:nrow(locations)) {
-      if (is.na(locations$place_lat[i]) & is.na(locations$place_lon[i])) {
+naInds <- which(is.na(locations$place_lat) & is.na(locations$place_lon))
+for (i in naInds) {
             locations$place_lat[i] <- locations$lat[i]
             locations$place_lon[i] <- locations$lon[i]
-      }
 }
 
 # Get the number of tweets for each second; drop the first entry because it's usually not a full second
