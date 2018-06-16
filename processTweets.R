@@ -3,12 +3,12 @@ library(lubridate)
 library(streamR)
 
 # Coordinates for USA
-usa <- c(-124.848974,24.396308,66.53076,49.23037)
-filterStream(file.name = "dat/sunriseTrack-7h.json", oauth = my_oauth, 
-             locations = usa, timeout = 25200) # 7 hours
-parsed <- parseTweets("dat/sunriseTrack-7h.json")
+usa <- c(-124.848974,24.396308,-66.53076,49.23037)
+filterStream(file.name = "dat/sunriseTrack-7h-2.json", oauth = my_oauth, 
+             locations = usa, timeout = 25500) # 7 hours, 5 minutes
+parsed <- parseTweets("dat/sunriseTrack-7h-2.json")
 parsed <- tbl_df(parsed)
-saveRDS(parsed, "dat/sunriseTweetsDF-7h.rds")
+saveRDS(parsed, "dat/sunriseTweetsDF-7h-2.rds")
 
 # Grab the columns we want, filter out any NA entries, and do some mutations to get the structure we want
 locations <- select(parsed, created_at, place_lat, place_lon, lat, lon) %>% 

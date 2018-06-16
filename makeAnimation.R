@@ -1,8 +1,12 @@
 library(ggplot2)
 library(animation)
 library(maps)
+library(dplyr)
+
 
 statemap <- map_data("state")
+
+#locations <- filter(locations, place_lon > -124.84 & place_lon < -66.53)
 
 # By Second
 # saveGIF ({
@@ -57,10 +61,16 @@ saveGIF ({
                   df <- ungroup(df) %>%
                         mutate(alphaVal = alphalist)
                   
+                  newInd <- (len.prevmatch+1):length(df$place_lat)
+                  medPosn <- as.data.frame(t(c(lat = median(df$place_lat[newInd]), 
+                                               lon = median(df$place_lon[newInd]))))
+                  
             } else {
                   match <- tweets.by.minute[i,1]
                   df <- filter(locations, time.by.min %in% match) %>% 
                         mutate(alphaVal = rep(1, n()))
+                  medPosn <- as.data.frame(t(c(lat = median(df$place_lat), 
+                                               lon = median(df$place_lon))))
             }
             
             p1 <- ggplot(data = statemap, aes(x = long, y = lat, group = group)) +
@@ -69,10 +79,17 @@ saveGIF ({
                   geom_point(data = df, aes(x = place_lon, y = place_lat), 
                              alpha = df$alphaVal, size = 3, inherit.aes = FALSE, 
                              color = "#292f33") + 
-                  annotate("text", label = df$time.by.min[1], x = -95, y = 20, size = 8) + 
+                  geom_point(data = medPosn, aes(x = lon, y = lat), 
+                             color = "red", size = 3, inherit.aes = FALSE) + 
+                  geom_vline(data = medPosn, xintercept = medPosn$lon, 
+                             color = "red", size = .5) +
+                  #geom_hline(data = medPosn, yintercept = medPosn$lat, 
+                             #color = "red", size = .5) +
+                  annotate("text", label = df$time.by.min[length(df$time.by.min)], x = -95, y = 20, 
+                           size = 8) + 
                   theme_void() + 
                   theme(legend.position = "none")
             
             print(p1)
       }
-}, interval = 0.125, ani.width = 1028, ani.height = 514, movie.name = "sunrise-tweets-7h-8fps.gif")
+}, interval = 0.125, ani.width = 1028, ani.height = 514, movie.name = "sunrise-tweets-7h-8fps-2.gif")
